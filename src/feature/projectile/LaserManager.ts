@@ -13,7 +13,7 @@ export class LaserManager {
     addLaser(vector: Vector2) {
         const laser = new Laser(vector)
         this.lasers.push(laser);
-        this.scene.addChild(laser.debugBox)
+        // this.scene.addChild(laser.debugBox)
         this.scene.addChild(laser)
     }
 

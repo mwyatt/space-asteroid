@@ -1,4 +1,5 @@
 import { Assets, Texture } from "pixi.js";
+import {AssetStore} from "./AssetStore.ts";
 
 export class TextureManager {
   private static loaded = false;
@@ -10,19 +11,20 @@ export class TextureManager {
           alias: "rock",
           src: "/assets/rock-bak.png"
       });
-      const rockSheet = buildAnimations(
-          await Assets.load("/assets/rock.json")
-      );
       const shipTexture = await Assets.load({
             alias: "ship",
-          src: "/assets/ship.png"
+          src: "/assets/ship-bak.png"
       });
 
       rockTexture.source.scaleMode = 'nearest';
       // rockSheet.source.scaleMode = 'nearest';
       shipTexture.source.scaleMode = 'nearest';
 
-      console.log(rockSheet)
+    const rockSheet = await Assets.load("/assets/rock.json")
+    const shipSheet = await Assets.load("/assets/ship.json")
+
+      AssetStore.addSheet("rock", rockSheet);
+      AssetStore.addSheet("ship", shipSheet);
 
       this.loaded = true;
   }
@@ -32,7 +34,7 @@ export class TextureManager {
   }
 }
 
-function buildAnimations(sheet) {
+export function buildAnimations(sheet) {
   const animations = {};
 
   const frameNames = Object.keys(sheet.data.frames);

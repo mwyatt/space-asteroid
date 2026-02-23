@@ -7,6 +7,7 @@ import {LaserManager} from "../feature/projectile/LaserManager.ts";
 import {ScoreText} from "../feature/ui/ScoreText.ts";
 import {EventBus} from "../core/EventBus.ts";
 import {Vector2} from "../core/Vector2.ts";
+import {AssetStore} from "../core/AssetStore.ts";
 
 export class MainScene extends Scene {
   private app!: Application;
@@ -26,9 +27,9 @@ export class MainScene extends Scene {
 
   onEnter() {
     this.input = new InputSystem();
-    this.player = new Player(this.app);
+    this.player = new Player(this);
     this.controller = new PlayerController(this.app, this.player, this.input);
-    this.rockManager = new RockManager(this);
+    this.rockManager = new RockManager(this, AssetStore.getSheet("rock"));
     this.laserManager = new LaserManager(this);
     this.scoreText = new ScoreText(this);
 
@@ -59,7 +60,7 @@ export class MainScene extends Scene {
 
   update(ticker: Ticker) {
     const { deltaTime } = ticker;
-    this.controller.update(deltaTime);
+    this.player.update(deltaTime);
     this.rockManager.update(deltaTime);
     this.laserManager.update(deltaTime, this.rockManager);
 

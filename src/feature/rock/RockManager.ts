@@ -1,13 +1,17 @@
 import {Rock} from "./Rock.ts";
-import {Application} from "pixi.js";
+import {AnimatedSprite, Application} from "pixi.js";
 import {MainScene} from "../../scene/MainScene.ts";
 import {Vector2} from "../../core/Vector2.ts";
 import {EventBus} from "../../core/EventBus.ts";
+// import {buildAnimations} from "../../core/TextureManager.ts";
 
 export class RockManager {
     private rocks: Rock[] = [];
+    private sprite: AnimatedSprite;
 
-    constructor(private scene: MainScene) {
+    constructor(private scene: MainScene, private rockSheet) {
+        // const animations = buildAnimations(this.rockSheet);
+        // this.sprite.source.scaleMode = 'nearest';
     }
 
     addRock(vector: Vector2, splittable: boolean | null = null) {
@@ -15,16 +19,13 @@ export class RockManager {
 
         this.rocks.push(rock);
         this.scene.addChild(rock)
-        this.scene.addChild(rock.debugBox)
     }
-
 
     hitRock(rock: Rock) {
         rock.takeHit();
     }
 
     destroyRock(rock: Rock) {
-        this.scene.removeChild(rock.debugBox);
         this.scene.removeChild(rock);
         this.rocks = this.rocks.filter(r => r !== rock);
     }

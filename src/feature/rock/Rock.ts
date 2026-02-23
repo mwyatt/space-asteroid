@@ -1,18 +1,26 @@
-import {Graphics, Sprite, Texture} from "pixi.js";
+import {AnimatedSprite, Container, Graphics, Sprite, Texture} from "pixi.js";
 import {Vector2} from "../../core/Vector2.ts";
 import {Hitbox} from "../../core/Hitbox.ts";
 import {EventBus} from "../../core/EventBus.ts";
+import {AsepriteAnimation} from "../../animation/AsepriteAnimation.ts";
+import {AssetStore} from "../../core/AssetStore.ts";
 
-export class Rock extends Sprite {
-  private fallSpeed = 1;
+export class Rock extends Container {
+  private sprite: AsepriteAnimation;
+
+  private fallSpeed = 2;
   private rotationSpeed = 0.1;
 
   debugBox: Graphics;
 
   constructor(vector: Vector2, private splittable: boolean | null = null) {
-    super(Texture.from("rock"));
-    this.anchor.set(0.5);
-    this.scale.set(1);
+    super();
+    this.sprite = new AsepriteAnimation(AssetStore.getSheet("rock"));
+    this.sprite.scale.set(1.5);
+    this.sprite.anchor.set(0.5);
+    this.sprite.animationSpeed = 0.2
+    this.sprite.loop = false
+
     this.splittable = splittable;
 
     // Random
@@ -25,13 +33,16 @@ export class Rock extends Sprite {
     if (this.splittable === null) {
       this.splittable = Math.random() > 0.5;
       if (this.splittable) {
-        this.scale.set(2);
+        this.sprite.scale.set(2);
         this.tint = 0xff8844; // warm orange
       }
     }
 
     this.debugBox = new Graphics()
     this.updateDebugBox()
+
+    this.addChild(this.sprite);
+    // this.addChild(this.debugBox)
   }
 
   getHitbox(): Hitbox {
@@ -45,7 +56,7 @@ export class Rock extends Sprite {
 
   update(deltaTime: number) {
     this.y += this.fallSpeed * deltaTime;
-    this.rotation += this.rotationSpeed * deltaTime;
+    this.sprite.rotation += this.rotationSpeed * deltaTime;
     this.updateDebugBox()
   }
 
@@ -59,7 +70,10 @@ export class Rock extends Sprite {
     if (this.splittable) {
       EventBus.emit("rockSplit", { rock: this });
     } else {
+      this.sprite.playAnimation('death')
+      this.sprite.onComplete = () => {
         EventBus.emit("rockDestroyed", { rock: this });
+      }
     }
   }
 }

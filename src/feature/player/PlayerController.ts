@@ -2,6 +2,7 @@ import {InputSystem} from "../input/InputSystem.ts";
 import {Player} from "./Player.ts";
 import {Application} from "pixi.js";
 
+// @todo remove
 export class PlayerController {
   static movementSpeed = 5;
 
