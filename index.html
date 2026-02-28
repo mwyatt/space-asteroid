@@ -13,6 +13,11 @@
 
 <body>
     <div id="app">
+<!-- In your index.html -->
+<div id="overlay" style="position:fixed;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);z-index:10;">
+  <button id="startBtn" style="font-size:2rem;padding:1rem 2rem;">Paused</button>
+</div>
+
         <div id="pixi-container"></div>
     </div>
     <script type="module" src="/src/main.ts"></script>

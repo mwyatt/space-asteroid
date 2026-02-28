@@ -1,17 +1,12 @@
 import {Rock} from "./Rock.ts";
-import {AnimatedSprite, Application} from "pixi.js";
 import {MainScene} from "../../scene/MainScene.ts";
 import {Vector2} from "../../core/Vector2.ts";
-import {EventBus} from "../../core/EventBus.ts";
-// import {buildAnimations} from "../../core/TextureManager.ts";
 
 export class RockManager {
     private rocks: Rock[] = [];
-    private sprite: AnimatedSprite;
+  private rockSpawnTimer = 0;
 
     constructor(private scene: MainScene, private rockSheet) {
-        // const animations = buildAnimations(this.rockSheet);
-        // this.sprite.source.scaleMode = 'nearest';
     }
 
     addRock(vector: Vector2, splittable: boolean | null = null) {
@@ -39,5 +34,19 @@ export class RockManager {
         offscreenRocks.forEach(rock => {
             this.destroyRock(rock);
         });
+
+    this.rockSpawnTimer += deltaTime;
+    if (this.rockSpawnTimer >= 120) {
+        this.rockSpawnTimer = 0;
+        const rockWidth = 64; // or use your actual rock sprite width
+        const minX = rockWidth / 2;
+        const maxX = this.scene.app.renderer.width - rockWidth / 2;
+        const spawnX = Math.random() * (maxX - minX) + minX;
+
+      this.addRock(new Vector2(
+            spawnX,
+            50
+        ));
+    }
     }
 }

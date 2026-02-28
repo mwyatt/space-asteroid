@@ -17,9 +17,7 @@ export class MainScene extends Scene {
   private rockManager!: RockManager;
   private laserManager!: LaserManager;
   private scoreText!: ScoreText;
-
-  private laserFireTimer = 0;
-  private rockSpawnTimer = 0;
+private isPaused = true;
 
   constructor(private app: Application) {
     super();
@@ -38,7 +36,23 @@ export class MainScene extends Scene {
 
     EventBus.on("rockDestroyed", this.onRockDestroyed);
     EventBus.on("rockSplit", this.onRockSplit);
+
+  this.isPaused = true;
+  document.getElementById("overlay")!.style.display = "flex";
+  document.getElementById("startBtn")!.onclick = () => {
+    this.isPaused = false;
+    document.getElementById("overlay")!.style.display = "none";
+  };
+
+  window.addEventListener("keydown", this.handleKeyDown);
   }
+
+  private handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === "Escape") {
+    this.isPaused = true;
+    document.getElementById("overlay")!.style.display = "flex";
+  }
+};
 
   private onRockDestroyed = (event) => {
     this.rockManager.destroyRock(event.rock);
@@ -59,30 +73,15 @@ export class MainScene extends Scene {
   };
 
   update(ticker: Ticker) {
+  if (this.isPaused) return;
     const { deltaTime } = ticker;
     this.player.update(deltaTime);
     this.rockManager.update(deltaTime);
-    this.laserManager.update(deltaTime, this.rockManager);
-
-    // @todo refactor this away
-    this.laserFireTimer += deltaTime;
-    if (this.laserFireTimer >= 30) {
-        this.laserFireTimer = 0;
-      this.laserManager.addLaser(this.player.getTipOfShip());
-    }
-
-    // @todo refactor this away
-    this.rockSpawnTimer += deltaTime;
-    if (this.rockSpawnTimer >= 120) {
-        this.rockSpawnTimer = 0;
-      this.rockManager.addRock(new Vector2(
-            Math.random() * this.app.renderer.width,
-            50
-        ));
-    }
+    this.laserManager.update(deltaTime, this.player, this.rockManager);
   }
 
   onExit() {
     this.input.destroy();
+    window.removeEventListener("keydown", this.handleKeyDown);
   }
 }

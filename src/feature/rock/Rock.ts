@@ -4,12 +4,14 @@ import {Hitbox} from "../../core/Hitbox.ts";
 import {EventBus} from "../../core/EventBus.ts";
 import {AsepriteAnimation} from "../../animation/AsepriteAnimation.ts";
 import {AssetStore} from "../../core/AssetStore.ts";
+import {rockSynth} from "../../core/Sound.ts";
 
 export class Rock extends Container {
   private sprite: AsepriteAnimation;
 
   private fallSpeed = 2;
   private rotationSpeed = 0.1;
+      private notes = ["A1", "C2", "D2", "E2"];
 
   debugBox: Graphics;
 
@@ -24,7 +26,7 @@ export class Rock extends Container {
     this.splittable = splittable;
 
     // Random
-    this.fallSpeed = Math.random() * 2; // Speed between 1 and 3
+    this.fallSpeed = Math.random() * 10; // Speed between 1 and 3
     this.rotationSpeed = 0.01 + Math.random() * 0.05; // Rotation speed between 0.01 and 0.06
     this.x = vector.x;
     this.y = vector.y;
@@ -70,6 +72,9 @@ export class Rock extends Container {
     if (this.splittable) {
       EventBus.emit("rockSplit", { rock: this });
     } else {
+      const note = this.notes[Math.floor(Math.random() * this.notes.length)];
+      rockSynth.triggerAttackRelease(note, "16n");
+
       this.sprite.playAnimation('death')
       this.sprite.onComplete = () => {
         EventBus.emit("rockDestroyed", { rock: this });

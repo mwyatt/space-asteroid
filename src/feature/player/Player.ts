@@ -14,7 +14,7 @@ export class Player extends Container {
   constructor(private scene: MainScene) {
     super()
     this.sprite = new AsepriteAnimation(AssetStore.getSheet("ship"));
-    this.sprite.scale.set(1.5);
+    this.sprite.scale.set(2);
     this.sprite.anchor.set(0.5);
     this.sprite.animationSpeed = 0.2
     this.sprite.loop = false
@@ -26,7 +26,7 @@ export class Player extends Container {
     this.updateDebugBox()
 
     this.addChild(this.sprite);
-    // this.addChild(this.debugBox)
+    this.addChild(this.debugBox)
   }
 
   getHitbox(): Hitbox {

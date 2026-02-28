@@ -1,11 +1,11 @@
-import { Assets, Texture } from "pixi.js";
+import {Assets, Texture, TextureStyle} from "pixi.js";
 import {AssetStore} from "./AssetStore.ts";
 
 export class TextureManager {
   private static loaded = false;
 
   static async load() {
-      if (this.loaded) return;
+      TextureStyle.defaultOptions.scaleMode = 'nearest';
 
       const rockTexture = await Assets.load({
           alias: "rock",
@@ -22,9 +22,11 @@ export class TextureManager {
 
     const rockSheet = await Assets.load("/assets/rock.json")
     const shipSheet = await Assets.load("/assets/ship.json")
+    const laserSheet = await Assets.load("/assets/laser.json")
 
       AssetStore.addSheet("rock", rockSheet);
       AssetStore.addSheet("ship", shipSheet);
+      AssetStore.addSheet("laser", laserSheet);
 
       this.loaded = true;
   }
